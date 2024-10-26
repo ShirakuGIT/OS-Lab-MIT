@@ -75,23 +75,39 @@ void cscan(int req[], int n, int head, int max) {
 
 void clook(int req[], int n, int head) {
     int total = 0, visited[n], min = __INT_MAX__, max = -1;
-    for (int i = 0; i < n; i++) visited[i] = 0;  // Initialize visited array
-    for (int i = 0; i < n; i++) { if (req[i] > max) max = req[i]; if (req[i] < min) min = req[i]; }
+    int start = head;
+    // Initialize visited array to track serviced requests
+    for (int i = 0; i < n; i++) visited[i] = 0;
+
+    // Find the minimum and maximum request values
+    for (int i = 0; i < n; i++) {
+        if (req[i] > max) max = req[i];
+        if (req[i] < min) min = req[i];
+    }
+
     printf("C-LOOK Order: ");
 
     // Move right from head to max, servicing requests
     for (int d = head; d <= max; d++) {
         for (int i = 0; i < n; i++) {
-            if (req[i] == d && !visited[i]) {
-                printf("%d ", req[i]); total += abs(head - req[i]); head = req[i]; visited[i] = 1;
-            }}}
+            if (req[i] == d && !visited[i]) { printf("%d ", req[i]); total += abs(head - req[i]); head = req[i]; visited[i] = 1;
+            }
+        }
+    }
 
-    // Jump to min and continue servicing requests
-    for (int d = min; d < head; d++) {
+    // Jump to the minimum request after reaching the maximum
+    if (head != min) {
+        total += abs(head - min);
+        head = min;
+    }
+
+    // Continue servicing requests from min to the initial head position
+    for (int d = min; d <= start; d++) {
         for (int i = 0; i < n; i++) {
-            if (req[i] == d && !visited[i]) {
-                printf("%d ", req[i]); total += abs(head - req[i]); head = req[i]; visited[i] = 1;
-            }}}
+            if (req[i] == d && !visited[i]) { printf("%d ", req[i]); total += abs(head - req[i]); head = req[i]; visited[i] = 1;
+            }
+        }
+    }
 
     printf("\nTotal Seek Time: %d\n", total);
 }
